@@ -1,0 +1,14 @@
+1 endpoint: nr apelant - durata - destinatie (numarul premium de apelat si durata de simulare in minute/secunde)
+din serviciu: pool de threads -> primesc req -> task thread nou ca sa pot sa mai primesc requesturi
+daca poate sa primeasca taskuri- 200 OK
+
+imi fac o tabela care contine apelatul si cele 3 costuri ( unul are cost 0 pentru primele x secunde,
+de obicei 14 secunde, altul are costul indivizibil pentru un minut de obicei, si pe urma ultimul cost,
+care e divizibil la secunda). Pentru prima bucata nu fac request catre TPCM pana la secunda 13, atunci fac
+un request catre tpcm fara rezervare partiala pentru urmatorul minut care e indivizibil si daca e ok il las
+sa vorbeasca in continuare, daca nu e ok, ii spun ca nu se poate si il deconectez. Daca ajung la ultima bucata care
+e divizibila la secunda, fac un request catre tpcm cu rezervare partiala pentru intregul minut, dar pe urma fac commit
+numai pe amountul cat a vorbit.
+
+Cand vine un apel deschid un task nou care extrage din baza de date cele 3 costuri si pe urma in task se intampla logica
+de mai sus.
