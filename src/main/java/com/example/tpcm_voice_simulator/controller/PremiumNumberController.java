@@ -18,13 +18,11 @@ public class PremiumNumberController {
     private PremiumNumberService premiumNumberService;
 
     @GetMapping
-    @Operation(summary = "Get all premium numbers")
     public List<PremiumNumber> getAllPremiumNumbers() {
         return premiumNumberService.getAllPremiumNumbers();
     }
 
     @GetMapping("/{phoneNumber}")
-    @Operation(summary = "Get premium number by phone number")
     public ResponseEntity<PremiumNumber> getPremiumNumber(@PathVariable @Parameter(description = "Phone number") String phoneNumber) {
         return premiumNumberService.getPremiumNumberByPhone(phoneNumber)
                 .map(ResponseEntity::ok)
@@ -32,13 +30,11 @@ public class PremiumNumberController {
     }
 
     @PostMapping
-    @Operation(summary = "Create new premium number")
     public PremiumNumber createPremiumNumber(@RequestBody PremiumNumber premiumNumber) {
         return premiumNumberService.savePremiumNumber(premiumNumber);
     }
 
     @PutMapping("/{phoneNumber}")
-    @Operation(summary = "Update premium number")
     public ResponseEntity<PremiumNumber> updatePremiumNumber(@PathVariable String phoneNumber, @RequestBody PremiumNumber premiumNumber) {
         if (premiumNumberService.getPremiumNumberByPhone(phoneNumber).isPresent()) {
             premiumNumber.setPhoneNumber(phoneNumber);
@@ -48,7 +44,6 @@ public class PremiumNumberController {
     }
 
     @DeleteMapping("/{phoneNumber}")
-    @Operation(summary = "Delete premium number")
     public ResponseEntity<?> deletePremiumNumber(@PathVariable String phoneNumber) {
         if (premiumNumberService.getPremiumNumberByPhone(phoneNumber).isPresent()) {
             premiumNumberService.deletePremiumNumber(phoneNumber);
