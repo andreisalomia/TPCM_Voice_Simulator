@@ -79,7 +79,7 @@ public class VoiceSimulatorService {
                     elapsedSeconds++;
 //                    daca apelul este mai scurt decat durata free atunci salvez direct
                     if (elapsedSeconds >= request.getDurationSeconds()) {
-                        saveVoiceCall(request, callId, elapsedSeconds, totalCost);
+                        saveVoiceCall(request, callId, request.getDurationSeconds(), totalCost);
                         log.info("CallId {}: Call completed during free phase", callId);
                         return;
                     }
@@ -94,7 +94,7 @@ public class VoiceSimulatorService {
 
                 if (transactionId2 == null) {
                     log.warn("CallId {}: TPCM rejected indivisible request. Disconnecting.", callId);
-                    saveVoiceCall(request, callId, elapsedSeconds, totalCost);
+                    saveVoiceCall(request, callId, request.getDurationSeconds(), totalCost);
                     return;
                 }
 
@@ -107,7 +107,7 @@ public class VoiceSimulatorService {
                     if (elapsedSeconds >= request.getDurationSeconds()) {
                         tpcmClient.commitTransaction(transactionId2, premiumConfig.getCost2());
                         totalCost += premiumConfig.getCost2();
-                        saveVoiceCall(request, callId, elapsedSeconds, totalCost);
+                        saveVoiceCall(request, callId, request.getDurationSeconds(), totalCost);
                         log.info("CallId {}: Call completed during indivisible phase", callId);
                         return;
                     }
@@ -131,7 +131,7 @@ public class VoiceSimulatorService {
                 }
             }
 
-            saveVoiceCall(request, callId, elapsedSeconds, totalCost);
+            saveVoiceCall(request, callId, request.getDurationSeconds(), totalCost);
 
         } catch (InterruptedException e) {
             log.info("CallId {}: Call simulation interrupted", callId);
